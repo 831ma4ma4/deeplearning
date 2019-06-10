@@ -3,10 +3,17 @@
 
 LSTMの実装を行う。言語モデルを作り、実際のデータでうまく学習できることを確認する。
 
+あああああ**あああ**あああああ
+
 ## 6.3　LSTMの実装
 
 ![](https://github.com/831ma4ma4/deeplearning/blob/master/6-3-01.PNG)
 
+  aaaa 
+    ssss
+    ssa
+  xxx
+  
 
 ### 6.3.1　TimeLSTMの実装
 aa
