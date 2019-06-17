@@ -29,6 +29,8 @@ aa
 
 ### 6.5.2　Dropoutによる過学習の抑制
 あああ
+![](https://github.com/831ma4ma4/deeplearning/blob/master/6-5-2-01.PNG)  
+![](https://github.com/831ma4ma4/deeplearning/blob/master/6-5-2-02.PNG)  
 
 ### 6.5.3　重み共有
 あああ
@@ -39,9 +41,14 @@ aa
 ### 6.5.5　最先端の研究へ
 
 PTBデータセットに対する各モデルのパープレキシティの結果
-![](https://github.com/831ma4ma4/deeplearning/blob/master/6-5-5-01.PNG)
-
+![](https://github.com/831ma4ma4/deeplearning/blob/master/6-5-5-01.PNG)  
 https://arxiv.org/abs/1708.02182
 
 
 ## まとめ
+
+言語モデルの改善テクニック
+- LSTMレイヤの多層化
+- Dropout
+- 重み共有
+
