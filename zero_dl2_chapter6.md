@@ -38,5 +38,7 @@ aa
 
 ### 6.5.5　最先端の研究へ
 あああ
+![](https://github.com/831ma4ma4/deeplearning/blob/master/6-5-5-01.PNG)
+
 
 ## まとめ
