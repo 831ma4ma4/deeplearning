@@ -1,18 +1,38 @@
 6章　ゲート付きRNN（後半）
 ====
 
+<ゴール>  
 LSTMの実装を行う。言語モデルを作り、実際のデータでうまく学習できることを確認する。
 
-あああああ**あああ**あああああ
 
 ## 6.3　LSTMの実装
 
+- 1ステップを処理するクラスを**LSTMクラス**として実装する。
+- Tステップ分をまとめて処理するクラスを**TimeLSTMクラス**として実装する。
+
+LSTMクラスで行う計算は以下の通り。  
 ![](https://github.com/831ma4ma4/deeplearning/blob/master/6-3-01.PNG)
 
-    aaaa 
-      ssss
-      ssa
-      xxx
+記憶セルの計算  
+隠れ状態の計算  
+
+上記４つのアフィン変換（xW<sub>x</sub>+hW<sub>h</sub>+b）は、ひとつの式でまとめて計算することが出来る。  
+
+LSTMクラスの初期化  
+
+    class LSTM:
+        def __init__(self, Wx, Wh, b):
+            '''
+            Parameters
+            ----------
+            Wx: 入力`x`用の重みパラーメタ（4つ分の重みをまとめる）
+            Wh: 隠れ状態`h`用の重みパラメータ（4つ分の重みをまとめる）
+            b: バイアス（4つ分のバイアスをまとめる）
+            '''
+            self.params = [Wx, Wh, b]
+            self.grads = [np.zeros_like(Wx), np.zeros_like(Wh), np.zeros_like(b)]
+            self.cache = None
+
   
 
 ### 6.3.1　TimeLSTMの実装
