@@ -2,8 +2,8 @@
 ====
 
 <ゴール>  
-LSTMの実装を行う。言語モデルを作り、実際のデータでうまく学習できることを確認する。
-
+- LSTMの実装を理解し、RNNモデルとの違いを確認する。
+- 言語モデルを作り、実際のデータでうまく学習できることを確認する。
 
 ## 6.3　LSTMの実装
 
@@ -249,10 +249,10 @@ LSTMレイヤを何層も深く重ねることで、モデルの表現力が増�
 
 ### 6.5.2　Dropoutによる過学習の抑制
 
-- 層を深くすることでモデルの表現力が増し、複雑な依存関係を学習することが期待できるが、過学習を起こしやすくなる。  
-  - 過学習とは、訓練データだけに対して正しい答えを出し、汎化能力が欠如した状態を指す。
+層を深くすることでモデルの表現力が増し、複雑な依存関係を学習することが期待できるが、過学習を起こしやすくなる。  
+- 過学習とは、訓練データだけに対して正しい答えを出し、汎化能力が欠如した状態を指す。
 
-過学習を抑制する定番の方法
+過学習を抑制する方法は？
 - 訓練データを増やす
 - モデルの複雑さを減らす
 - 正則化（重みの値が大きくなりすぎることにペナルティを課す）
@@ -265,18 +265,99 @@ Dropoutは、訓練時にレイヤ内のニューロンのいくつかをラン�
 
 Dropoutはランダムにニューロンを無視することで、汎化性能を向上させることができる。
 
+RNNを使ったモデルでは、どこにDropoutレイヤを挿入すべきか？
+- LSTMレイヤの時系列方向
+  - 時間が進むのに比例してDropoutによるノイズが蓄積して、学習がうまく進まない。
+- LSTMレイヤの深さ方向（上下方向）
+  - 時間が進んでも情報が失われず、深さ方向にだけ有効に働く。
 
-![](https://github.com/831ma4ma4/deeplearning/blob/master/6-5-2-02.PNG)  
-
+RNNの時間軸方向の正則化を目的とした手法
 - 変分ドロップアウト（Variational Dropout）  
 同じ階層にあるドロップアウトでは、共通のマスクを利用する。（マスクは「データを通す/通さない」の二値のランダムパターン）
 
+![](https://github.com/831ma4ma4/deeplearning/blob/master/6-5-2-02.PNG)  
 
 ### 6.5.3　重み共有
-あああ
+Embeddingレイヤの重みとAffineレイヤの重みを共有する。
+
+なぜ重み共有は有効なのか？
+- 重みを共有することで、学習すべきパラメータ数を減らすことができる。
+- パラメータ数が減ることで、過学習を抑制することができる。
+
 
 ### 6.5.4　より良いRNNLMの実装
-あああ
+言語モデルの改善テクニックを使ったモデルを確認する。
+- LSTMレイヤの多層化
+- Dropout
+- 重み共有
+
+```python
+    class BetterRnnlm(BaseModel):
+        '''
+         LSTMレイヤを2層利用し、各層にDropoutを使うモデル
+         [1]で提案されたモデルをベースとし、weight tying[2][3]を利用
+
+         [1] Recurrent Neural Network Regularization (https://arxiv.org/abs/1409.2329)
+         [2] Using the Output Embedding to Improve Language Models (https://arxiv.org/abs/1608.05859)
+         [3] Tying Word Vectors and Word Classifiers (https://arxiv.org/pdf/1611.01462.pdf)
+        '''
+        def __init__(self, vocab_size=10000, wordvec_size=650,
+                     hidden_size=650, dropout_ratio=0.5):
+            V, D, H = vocab_size, wordvec_size, hidden_size
+            rn = np.random.randn
+
+            embed_W = (rn(V, D) / 100).astype('f')
+            lstm_Wx1 = (rn(D, 4 * H) / np.sqrt(D)).astype('f')
+            lstm_Wh1 = (rn(H, 4 * H) / np.sqrt(H)).astype('f')
+            lstm_b1 = np.zeros(4 * H).astype('f')
+            lstm_Wx2 = (rn(H, 4 * H) / np.sqrt(H)).astype('f')
+            lstm_Wh2 = (rn(H, 4 * H) / np.sqrt(H)).astype('f')
+            lstm_b2 = np.zeros(4 * H).astype('f')
+            affine_b = np.zeros(V).astype('f')
+
+            # 3つの改善!
+            self.layers = [
+                TimeEmbedding(embed_W),
+                TimeDropout(dropout_ratio),
+                TimeLSTM(lstm_Wx1, lstm_Wh1, lstm_b1, stateful=True),
+                TimeDropout(dropout_ratio),
+                TimeLSTM(lstm_Wx2, lstm_Wh2, lstm_b2, stateful=True),
+                TimeDropout(dropout_ratio),
+                TimeAffine(embed_W.T, affine_b)  # weight tying!!
+            ]
+            self.loss_layer = TimeSoftmaxWithLoss()
+            self.lstm_layers = [self.layers[2], self.layers[4]]
+            self.drop_layers = [self.layers[1], self.layers[3], self.layers[5]]
+
+            self.params, self.grads = [], []
+            for layer in self.layers:
+                self.params += layer.params
+                self.grads += layer.grads
+
+        def predict(self, xs, train_flg=False):
+            for layer in self.drop_layers:
+                layer.train_flg = train_flg
+
+            for layer in self.layers:
+                xs = layer.forward(xs)
+            return xs
+
+        def forward(self, xs, ts, train_flg=True):
+            score = self.predict(xs, train_flg)
+            loss = self.loss_layer.forward(score, ts)
+            return loss
+
+        def backward(self, dout=1):
+            dout = self.loss_layer.backward(dout)
+            for layer in reversed(self.layers):
+                dout = layer.backward(dout)
+            return dout
+
+        def reset_state(self):
+            for layer in self.lstm_layers:
+                layer.reset_state()
+```
+
 
 ### 6.5.5　最先端の研究へ
 
