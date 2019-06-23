@@ -11,12 +11,18 @@
 - Tステップ分をまとめて処理するクラスを**TimeLSTMクラス**として実装する。
 
 LSTMクラスで行う計算は以下の通り。  
+
+４つの重みの計算
 ![](https://github.com/831ma4ma4/deeplearning/blob/master/6-3-01.PNG)
 
 記憶セルの計算  
-隠れ状態の計算  
+![](https://github.com/831ma4ma4/deeplearning/blob/master/6-3-02.PNG)
 
-上記４つのアフィン変換（xW<sub>x</sub>+hW<sub>h</sub>+b）は、ひとつの式でまとめて計算することが出来る。  
+隠れ状態の計算  
+![](https://github.com/831ma4ma4/deeplearning/blob/master/6-3-03.PNG)
+
+
+４つのアフィン変換（xW<sub>x</sub>+hW<sub>h</sub>+b）は、ひとつの式でまとめて計算することが出来る。  
 
 LSTMクラスの初期化  
 
