@@ -6,12 +6,10 @@
 - LSTMを使用した言語モデルを作成する。  
 
 ## 6.3　LSTMの実装
-
 - 1ステップを処理するクラスを**LSTMクラス**として実装する。
 - Tステップ分をまとめて処理するクラスを**TimeLSTMクラス**として実装する。
 
 LSTMクラスで行う計算は以下の通り。  
-
 - ４つの重みの計算  
   - f：忘却ゲート  
   - g：新たに記憶セルに追加する情報  
@@ -26,6 +24,7 @@ LSTMクラスで行う計算は以下の通り。
 - 隠れ状態の計算  
 ![](https://github.com/831ma4ma4/deeplearning/blob/master/6-3-03.PNG)  
 
+LSTMの計算グラフ  
 ![](https://github.com/831ma4ma4/deeplearning/blob/master/6-3-04.PNG)  
 https://colah.github.io/posts/2015-08-Understanding-LSTMs/  
 
@@ -110,6 +109,7 @@ LSTMクラスの初期化
         return dx, dh_prev, dc_prev
 ```
 
+
 ### 6.3.1　TimeLSTMの実装
 TimeLSTMは、T個分の時系列データをまとめて処理するレイヤ。
 
@@ -184,8 +184,7 @@ RNNで学習を行う際は、Truncated BPTTを行う。
 - 5章で実装した「RNNを使った言語モデル」とほとんど同じ。
 - Time RNNレイヤを Time LSTMレイヤに変える。
 
-Rnnlmクラスの実装
-
+Rnnlmクラスの実装  
 ```python
     class Rnnlm(BaseModel):
         def __init__(self, vocab_size=10000, wordvec_size=100, hidden_size=100):
@@ -235,8 +234,7 @@ Rnnlmクラスの実装
             self.lstm_layer.reset_state()
 ```
 
-学習のためのコード
-
+学習のためのコード  
 ```python
     import sys
     sys.path.append('..')
@@ -282,29 +280,30 @@ Rnnlmクラスの実装
     model.save_params()
 ```
 
-## 6.5　RNNLMのさらなる改善
-6.4で説明したRNNLMの改善ポイント３点
 
+## 6.5　RNNLMのさらなる改善
+6.4で説明したRNNLMの改善ポイント３点  
 - LSTMレイヤの多層化
 - Dropout
 - 重み共有
-
+  
+  
 ### 6.5.1　LSTMレイヤの多層化
 LSTMレイヤを何層も深く重ねることで、モデルの表現力が増し、複雑な依存関係を学習することが期待できる。  
 
 ![](https://github.com/831ma4ma4/deeplearning/blob/master/6-5-1-01.PNG)  
 
-どれだけ層を重ねるべきか？
+どれだけ層を重ねるべきか？  
 - 問題の複雑さや、用意された学習データの量に応じて適宜決める必要がある。
 - PTBデータセットの言語モデルの場合は、LSTMの層数は2～4程度が良い結果を得られている。
 - Google翻訳で使われているGNMTと呼ばれるモデルはLSTM層を8層重ねている。
-
+  
+  
 ### 6.5.2　Dropoutによる過学習の抑制
-
 層を深くすることでモデルの表現力が増すが、過学習を起こしやすくなる。  
-- 過学習とは、訓練データだけに対して正しい答えを出し、汎化能力が欠如した状態を指す。
+- 過学習とは、訓練データだけに対して正しい答えを出し、汎化能力が欠如した状態を指す。  
 
-過学習を抑制する方法は？
+過学習を抑制する方法は？  
 - 訓練データを増やす
 - モデルの複雑さを減らす
 - 正則化を行う（重みの値が大きくなりすぎることにペナルティを課す）
@@ -316,13 +315,13 @@ http://jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf
 
 左が通常のニューラルネットワーク。左がDropoutを適用したネットワーク。
 
-Dropoutはランダムにニューロンを無視することで、汎化性能を向上させることができる。
+Dropoutはランダムにニューロンを無視することで、汎化性能を向上させることができる。  
 
 RNNを使ったモデルでは、どこにDropoutレイヤを挿入すべきか？
 - LSTMレイヤの時系列方向
   - 時間が進むのに比例してDropoutによるノイズが蓄積して、学習がうまく進まない。
 - LSTMレイヤの深さ方向（上下方向）
-  - 時間が進んでも情報が失われず、深さ方向にだけ有効に働く。
+  - 時間が進んでも情報が失われず、深さ方向にだけ有効に働く。  
 
 RNNの時間軸方向の正則化を目的とした手法
 - 変分ドロップアウト（Variational Dropout）  
@@ -330,7 +329,8 @@ RNNの時間軸方向の正則化を目的とした手法
 
 ![](https://github.com/831ma4ma4/deeplearning/blob/master/6-5-2-02.PNG)  
 https://arxiv.org/pdf/1512.05287.pdf  
-
+  
+  
 ### 6.5.3　重み共有
 Embeddingレイヤの重みとAffineレイヤの重みを共有する。
 
@@ -339,8 +339,8 @@ Embeddingレイヤの重みとAffineレイヤの重みを共有する。
 なぜ重み共有は有効なのか？
 - 重みを共有することで、学習すべきパラメータ数を減らすことができる。
 - パラメータ数が減ることで、過学習を抑制することができる。
-
-
+  
+  
 ### 6.5.4　より良いRNNLMの実装
 言語モデルの改善テクニックを使ったモデルを確認する。
 - LSTMレイヤの多層化
@@ -413,18 +413,19 @@ Embeddingレイヤの重みとAffineレイヤの重みを共有する。
             for layer in self.lstm_layers:
                 layer.reset_state()
 ```
-
-
+  
+  
 ### 6.5.5　最先端の研究へ
-
 PTBデータセットに対する各モデルのパープレキシティの結果
 ![](https://github.com/831ma4ma4/deeplearning/blob/master/6-5-5-01.PNG)  
 https://arxiv.org/abs/1708.02182
 
 上記表のモデルにおいても、本章と同様に多層のLSTM、Dropoutベースの正則化、重み共有が使われている。  
 一番下のモデル「AWS-LSTM 3-layer LSTM(tied) + continuous cache pointer」に出てくる
-**continuous cache pointer**は、8章で学ぶ**Attention**をベースとしたものである。
-
+**continuous cache pointer**は、  
+8章で学ぶ**Attention**をベースとしたものである。
+  
+  
 ## まとめ
 - LSTMレイヤにゲートの仕組みを実装することで、5章で作成したRNNを使った言語モデルよりも精度が良くなる。
 - LSTMを使った言語モデルの改善テクニックとしては以下が有効である。
