@@ -27,6 +27,8 @@ LSTMクラスで行う計算は以下の通り。
 
 
 ４つのアフィン変換（xW<sub>x</sub>+hW<sub>h</sub>+b）は、ひとつの式でまとめて計算することが出来る。  
+![](https://github.com/831ma4ma4/deeplearning/blob/master/6-3-04.PNG)  
+https://colah.github.io/posts/2015-08-Understanding-LSTMs/  
 
 LSTMクラスの初期化  
 
@@ -310,6 +312,7 @@ LSTMレイヤを何層も深く重ねることで、モデルの表現力が増�
 
 Dropoutは、訓練時にレイヤ内のニューロンのいくつかをランダムに無視して学習を行う。  
 ![](https://github.com/831ma4ma4/deeplearning/blob/master/6-5-2-01.PNG)  
+http://jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf  
 
 左が通常のニューラルネットワーク。左がDropoutを適用したネットワーク。
 
@@ -326,6 +329,7 @@ RNNの時間軸方向の正則化を目的とした手法
 同じ階層にあるドロップアウトでは、共通のマスクを利用する。（マスクは「データを通す/通さない」の二値のランダムパターン）
 
 ![](https://github.com/831ma4ma4/deeplearning/blob/master/6-5-2-02.PNG)  
+https://arxiv.org/pdf/1512.05287.pdf  
 
 ### 6.5.3　重み共有
 Embeddingレイヤの重みとAffineレイヤの重みを共有する。
