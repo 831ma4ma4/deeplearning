@@ -12,26 +12,26 @@
 
 LSTMクラスで行う計算は以下の通り。  
 
-４つの重みの計算  
-- f：忘却ゲート  
-- g：新たに記憶セルに追加する情報  
-- i：入力ゲート  
-- o：出力ゲート  
-![](https://github.com/831ma4ma4/deeplearning/blob/master/6-3-01.PNG)
+- ４つの重みの計算  
+  - f：忘却ゲート  
+  - g：新たに記憶セルに追加する情報  
+  - i：入力ゲート  
+  - o：出力ゲート  
 
-記憶セルの計算  
-![](https://github.com/831ma4ma4/deeplearning/blob/master/6-3-02.PNG)
+![](https://github.com/831ma4ma4/deeplearning/blob/master/6-3-01.PNG)  
 
-隠れ状態の計算  
-![](https://github.com/831ma4ma4/deeplearning/blob/master/6-3-03.PNG)
+- 記憶セルの計算  
+![](https://github.com/831ma4ma4/deeplearning/blob/master/6-3-02.PNG)  
 
+- 隠れ状態の計算  
+![](https://github.com/831ma4ma4/deeplearning/blob/master/6-3-03.PNG)  
 
-４つのアフィン変換（xW<sub>x</sub>+hW<sub>h</sub>+b）は、ひとつの式でまとめて計算することが出来る。  
 ![](https://github.com/831ma4ma4/deeplearning/blob/master/6-3-04.PNG)  
 https://colah.github.io/posts/2015-08-Understanding-LSTMs/  
 
-LSTMクラスの初期化  
+４つのアフィン変換（xW<sub>x</sub>+hW<sub>h</sub>+b）は、ひとつの式でまとめて計算することが出来る。  
 
+LSTMクラスの初期化  
 ```python
     class LSTM:
         def __init__(self, Wx, Wh, b):
@@ -431,4 +431,3 @@ https://arxiv.org/abs/1708.02182
   - LSTMレイヤの多層化
   - Dropout
   - 重み共有
-
