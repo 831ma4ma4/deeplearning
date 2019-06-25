@@ -2,11 +2,11 @@
 ====
 
 <ゴール>  
-- LSTMの仕組みを実装し、RNNとの違いを理解する。  
+- LSTMの仕組みを実装し、単純なRNNとの違いを理解する。  
 - LSTMを使用した言語モデルを作成する。  
 
 ## 6.3　LSTMの実装
-- 1ステップを処理するクラスを**LSTMクラス**として実装する。
+- LSTMの1ステップを処理するクラスを**LSTMクラス**として実装する。
 - Tステップ分をまとめて処理するクラスを**TimeLSTMクラス**として実装する。
 
 LSTMクラスで行う計算は以下の通り。  
@@ -50,10 +50,13 @@ LSTMクラスの初期化
 ```python
     def forward(self, x, h_prev, c_prev):
         Wx, Wh, b = self.params
+        # N:バッチ数、H:記憶セルと隠れ状態の次元数
         N, H = h_prev.shape
-
+        
+        # ４つのパラメータをまとめて計算する
         A = np.dot(x, Wx) + np.dot(h_prev, Wh) + b
 
+        #スライスして取り出す
         f = A[:, :H]
         g = A[:, H:2*H]
         i = A[:, 2*H:3*H]
@@ -66,7 +69,8 @@ LSTMクラスの初期化
 
         c_next = f * c_prev + g * i
         h_next = o * np.tanh(c_next)
-
+        
+        # 順伝播での中間結果を保持し、逆伝播の計算で使用する
         self.cache = (x, h_prev, c_prev, i, f, g, o, c_next)
         return h_next, c_next
 ```
@@ -92,7 +96,7 @@ LSTMクラスの初期化
         df *= f * (1 - f)
         do *= o * (1 - o)
         dg *= (1 - g ** 2)
-
+        # 配列を横方向に連結する
         dA = np.hstack((df, dg, di, do))
 
         dWh = np.dot(h_prev.T, dA)
