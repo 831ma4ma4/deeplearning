@@ -96,6 +96,7 @@ LSTMクラスの初期化
         df *= f * (1 - f)
         do *= o * (1 - o)
         dg *= (1 - g ** 2)
+        
         # 配列を横方向に連結する
         dA = np.hstack((df, dg, di, do))
 
