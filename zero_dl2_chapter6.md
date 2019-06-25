@@ -313,7 +313,7 @@ Dropoutは、訓練時にレイヤ内のニューロンのいくつかをラン�
 ![](https://github.com/831ma4ma4/deeplearning/blob/master/6-5-2-01.PNG)  
 http://jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf  
 
-左が通常のニューラルネットワーク。左がDropoutを適用したネットワーク。
+左が通常のニューラルネットワーク。右がDropoutを適用したネットワーク。
 
 Dropoutはランダムにニューロンを無視することで、汎化性能を向上させることができる。  
 
