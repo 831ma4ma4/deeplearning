@@ -182,7 +182,8 @@ RNNで学習を行う際は、Truncated BPTTを行う。
 
 ## 6.4　LSTMを使った言語モデル
 - 5章で実装した「RNNを使った言語モデル」とほとんど同じ。
-- Time RNNレイヤを Time LSTMレイヤに変える。
+- Time RNNレイヤを Time LSTMレイヤに変える。　　
+![](https://github.com/831ma4ma4/deeplearning/blob/master/6-3-01.PNG)  
 
 Rnnlmクラスの実装  
 ```python
